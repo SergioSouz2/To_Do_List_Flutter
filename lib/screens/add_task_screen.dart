@@ -1,13 +1,11 @@
+import 'package:flutter_application_1/domain/task/TaskProvider.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_application_1/domain/task_model.dart';
-import 'package:flutter_application_1/domain/task_repository.dart';
+import 'package:flutter_application_1/domain/task/task_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AddTaskScreen extends StatefulWidget {
-  final TaskRepository taskRepository;
-
-  const AddTaskScreen({Key? key, required this.taskRepository})
-      : super(key: key);
+  AddTaskScreen({super.key});
 
   @override
   _AddTaskScreenState createState() => _AddTaskScreenState();
@@ -124,9 +122,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           hintStyle: TextStyle(color: Colors.white),
                         ),
                         controller: TextEditingController(
-                          text: _selectedDate == null
-                              ? ''
-                              : DateFormat('dd/MM/yyyy').format(_selectedDate),
+                          text: DateFormat('dd/MM/yyyy').format(_selectedDate),
                         ),
                         style: const TextStyle(color: Colors.white),
                       ),
@@ -138,7 +134,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             const SizedBox(height: 16),
             ElevatedButton(
               style: ButtonStyle(
-                minimumSize: MaterialStateProperty.all(Size.fromHeight(50)),
+                minimumSize:
+                    MaterialStateProperty.all(const Size.fromHeight(50)),
                 backgroundColor: MaterialStateProperty.all(Colors.purple),
               ),
               onPressed: _isButtonDisabled
@@ -147,7 +144,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       if (!_isButtonDisabled) {
                         String title = _titleController.text;
                         String description = _descriptionController.text;
-                        DateTime date = _selectedDate ?? DateTime.now();
+                        DateTime date = _selectedDate;
 
                         Task newTask = Task(
                           title: title,
@@ -155,9 +152,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           date: date,
                         );
 
-                        widget.taskRepository.addTask(newTask);
-
-                        Navigator.pop(context);
+                        Provider.of<TaskProvider>(context, listen: false)
+                            .addTask(newTask);
+                        Navigator.of(context).pop();
                       }
                     },
               child: const Text(
